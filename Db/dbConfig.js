@@ -1,7 +1,7 @@
 const mysql2 = require("mysql2");
 
 const dbConnection = mysql2.createPool({
-  socketPath: process.env.DB_SOCKET_PATH,
+
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
@@ -11,4 +11,7 @@ const dbConnection = mysql2.createPool({
 });
 
 // Converts the pool to use Promise-based queries instead of callbacks.
+
 module.exports = dbConnection.promise();
+
+
