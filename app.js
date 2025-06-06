@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+
 const cors = require('cors')
 
 const app = express();
@@ -39,11 +40,10 @@ async function start() {
     await dbConnection.execute(answers);
 
     await app.listen(port);
-    console.log(`Listening on ${port}`);
-  } catch (error) {
-    console.log(error);
-  }
+
 }
 
 // start server
+
 start();
+
