@@ -17,7 +17,11 @@ const { users, questions, answers } = require("./Table/Schema");
 
 // const userRoutes = require("./Routes/userRoute");
 // const questionRoutes = require("./Routes/questionRoute");
-const authMiddleware = require("./MiddleWare/authMiddleWare");
+const authMiddleware = require("./MiddleWare/authMiddleWare")
+
+const userRoutes = require("./Routes/userRoute");
+const questionRoutes = require("./routes/questionRoute");
+const authMiddleware = require("./middleware/authMiddleware");
 
 
 // user Route middleware
