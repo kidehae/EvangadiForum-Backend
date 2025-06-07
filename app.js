@@ -19,24 +19,10 @@ const questionRoutes = require("./Routes/questionRoute");
 const authMiddleware = require("./middleware/authMiddleware");
 
 // user Route middleware
+
 app.use("/api/users", userRoutes);
 
-// !Question route middleware
-// app.use(express.json())  // Middleware to parse JSON
-app.use("/api/questions", questionRoutes); //
-// const PORT = process.env.PORT || 2112;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-// Apply routes
-//app.use("/api/users", userRoutes);
-app.use("/api/questions", questionRoutes);
-
-app.use("/", (req, res) => {
-  res.send("yellow");
-});
-
-// app.use("/api/questions", authMiddleware, questionRoutes);
+app.use("/api/questions", authMiddleware, questionRoutes);
 
 const answersRoute = require("./Routes/answerRoute"); //import the answer route file
 
