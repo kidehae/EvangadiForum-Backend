@@ -22,10 +22,9 @@ const { users, questions, answers } = require("./Table/Schema");
 // Routes
 const userRoutes = require("./Routes/userRoute");
 const questionRoutes = require("./Routes/questionRoute");
-// const authMiddleware = require("./middleware/authMiddleware");
+const authMiddleware = require("./middleware/authMiddleware");
 
-const questionRoutes = require("./Routes/questionRoute");
-// const authMiddleware = require("./MiddleWare/authMiddleware");
+
 
 // user Route middleware
 app.use("/api/users", userRoutes);
@@ -40,6 +39,12 @@ app.use("/api/questions", questionRoutes); //
 // Apply routes
 app.use("/api/users", userRoutes);
 // app.use("/api/questions", authMiddleware, questionRoutes);
+
+const answersRoute = require('./Routes/answerRoute'); //import the answer route file
+
+//answers routes middleware: mount the answer routes
+
+app.use('/api/answers',authMiddleware,answersRoute)
 
 // Start server and create tables
 
