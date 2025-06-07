@@ -14,47 +14,28 @@ const dbConnection = require("./Db/dbConfig");
 const { users, questions, answers } = require("./Table/Schema");
 
 
-
-// const userRoutes = require("./Routes/userRoute");
-// // const questionRoutes = require("./Routes/questionRoute");
-// const authMiddleware = require("./MiddleWare/authMiddleWare")
-
 // Routes
 const userRoutes = require("./Routes/userRoute");
 const questionRoutes = require("./Routes/questionRoute");
 const authMiddleware = require("./middleware/authMiddleware");
 
-
-
 // user Route middleware
 app.use("/api/users", userRoutes);
 
-// !Question route middleware
-// app.use(express.json())  // Middleware to parse JSON
-app.use("/api/questions", questionRoutes); //
-// const PORT = process.env.PORT || 2112;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-// Apply routes
 app.use("/api/users", userRoutes);
-// app.use("/api/questions", authMiddleware, questionRoutes);
+
+app.use("/api/questions", authMiddleware, questionRoutes);
+
+app.use("/api/answers", authMiddleware, answersRoute);
 
 const answersRoute = require('./Routes/answerRoute'); //import the answer route file
-
-//answers routes middleware: mount the answer routes
-
-app.use('/api/answers',authMiddleware,answersRoute)
-
-// Start server and create tables
-
 
 async function start() {
   try {
     await dbConnection.query("SELECT 'test'"); // Test DB connection
     console.log("Database connection established");
 
-      
+
     // start server
     await dbConnection.query(users);
     await dbConnection.query(questions);
@@ -69,4 +50,3 @@ async function start() {
 }
 
 start();
-
