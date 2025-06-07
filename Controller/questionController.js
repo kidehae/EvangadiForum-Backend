@@ -1,6 +1,7 @@
 const dbConnection = require("../Db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
 
+
 async function getSingleQuestion(req, res) {
   const questionId = req.params.question_id;
 
@@ -36,6 +37,8 @@ async function getSingleQuestion(req, res) {
   }
 }
 
+
+
 const getAllQuestions = async (req, res) => {
   try {
     const [questions] = await dbConnection.query(`
@@ -46,7 +49,9 @@ const getAllQuestions = async (req, res) => {
         u.username 
       FROM questions q
       JOIN users u ON q.userid = u.userid
-    `);
+
+    `); 
+
 
     if (questions.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -60,12 +65,17 @@ const getAllQuestions = async (req, res) => {
     console.error("Error fetching questions:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal Server Error",
-      message: error.message || "An unexpected error occurred.",
+
+     
+      message: error.message || "An unexpected error occurred."
+
     });
   }
 };
 
 module.exports = {
+
   getAllQuestions,
   getSingleQuestion,
 };
+
