@@ -1,5 +1,5 @@
 // db connection
-const dbConnection = require("../db/dbConfig");
+const dbConnection = require("../Db/dbConfig");
 
 const bcrypt = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
@@ -23,11 +23,11 @@ async function register(req, res) {
 
     if (user.length > 0) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.CONFLICT)
         .json({ msg: "User already registered" });
     }
 
-    // password must be atleast 8 characters
+    // password must be at least 8 characters
     if (password.length < 8) {
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -43,12 +43,12 @@ async function register(req, res) {
       [username, firstname, lastname, email, hashedPassword]
     );
 
-    return res.status(StatusCodes.CREATED).json({ msg: "User registered" });
+    return res.status(StatusCodes.CREATED).json({ msg: "User registered successfully" });
   } catch (error) {
     console.log(error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "Something went wrong, try again later!" });
+      .json({ msg: "An unexpected error occurred." });
   }
 }
 

@@ -1,6 +1,6 @@
 //This file contains the logic for handling the incoming answer data, validating it, and storing it in the database.
 const dbconnection = require ('../Db/dbConfig')
-const StatusCodes = require ('http-status-codes')
+const {StatusCodes} = require ('http-status-codes')
 
 async function postAnswer (req,res) {
     //1. get data from request body
