@@ -19,7 +19,13 @@ const questionRoutes = require("./Routes/questionRoute");
 // const authMiddleware = require("./MiddleWare/authMiddleware");
 
 // Apply routes
-app.use("/api/users", userRoutes);
+//app.use("/api/users", userRoutes);
+app.use("/api/questions", questionRoutes);
+
+app.use("/", (req, res) => {
+  res.send("yellow");
+});
+
 // app.use("/api/questions", authMiddleware, questionRoutes);
 
 // Start server and create tables
@@ -42,4 +48,3 @@ async function start() {
 }
 
 start();
-
