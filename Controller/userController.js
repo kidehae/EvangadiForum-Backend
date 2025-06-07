@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // userController.js
 
 const dbConnection = require("../Db/dbConfig"); 
@@ -63,10 +62,6 @@ async function login(req, res) {
       .json({ msg: "something went wrong, try again later!" });
   }
 }
-=======
-// db connection
-const dbConnection = require("../Db/dbConfig");
->>>>>>> b6f20197fc5b9d67369f76fd90f71f7a18470f05
 
 
 //* Function to handle user registration
@@ -93,11 +88,7 @@ async function register(req, res) { // Asynchronous function for DB and hashing
         .json({ msg: "User already registered" });
     }
 
-<<<<<<< HEAD
-    // Password length validation
-=======
     // password must be at least 8 characters
->>>>>>> b6f20197fc5b9d67369f76fd90f71f7a18470f05
     if (password.length < 8) {
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -114,11 +105,7 @@ async function register(req, res) { // Asynchronous function for DB and hashing
       [username, firstname, lastname, email, hashedPassword] // Values to insert
     );
 
-<<<<<<< HEAD
-    return res.status(StatusCodes.CREATED).json({ msg: "User registered" }); // 201 Created: User successfully registered
-=======
     return res.status(StatusCodes.CREATED).json({ msg: "User registered successfully" });
->>>>>>> b6f20197fc5b9d67369f76fd90f71f7a18470f05
   } catch (error) {
     console.log("Registration error:", error.message);
     return res

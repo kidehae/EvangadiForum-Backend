@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 //This file contains the logic for handling the incoming answer data, validating it, and storing it in the database.
 const dbconnection = require ('../Db/dbConfig')
 const {StatusCodes} = require ('http-status-codes')
@@ -27,4 +25,3 @@ async function postAnswer (req,res) {
     }
 }
 module.exports = {postAnswer};
->>>>>>> b6f20197fc5b9d67369f76fd90f71f7a18470f05
