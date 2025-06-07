@@ -16,19 +16,24 @@ const { users, questions, answers } = require("./Table/Schema");
 
 
 // const userRoutes = require("./Routes/userRoute");
-// const questionRoutes = require("./Routes/questionRoute");
-const authMiddleware = require("./MiddleWare/authMiddleWare")
+// // const questionRoutes = require("./Routes/questionRoute");
+// const authMiddleware = require("./MiddleWare/authMiddleWare")
 
 const userRoutes = require("./Routes/userRoute");
-const questionRoutes = require("./routes/questionRoute");
+const questionRoutes = require("./Routes/questionRoute");
 // const authMiddleware = require("./middleware/authMiddleware");
 
 
 // user Route middleware
-// app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 // !Question route middleware
-// app.use("/api/questions", authMiddleware, questionRoutes);
+// app.use(express.json())  // Middleware to parse JSON
+app.use("/api/questions", questionRoutes); //
+// const PORT = process.env.PORT || 2112;
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
 
 // !Answer route middleware
 
@@ -44,12 +49,13 @@ async function start() {
     await dbConnection.execute(answers);
 
     await app.listen(port);
-
+  
+    
 } catch (error) {
     console.log(error);
   }
 }
-
+ 
 // start server
 
 start();
