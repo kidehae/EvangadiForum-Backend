@@ -1,15 +1,15 @@
 require("dotenv").config();
 const express = require("express");
-
-const cors = require('cors')
+const cors = require("cors");
 
 const app = express();
 const port = 2112;
 
-//  global middlewares that apply to all routes.
-app.use(cors())
-app.use(express.json()); // json middleware to extract json data
+// Global middlewares
+app.use(cors());
+app.use(express.json());
 
+// DB connection and table schemas
 const dbConnection = require("./Db/dbConfig");
 const { users, questions, answers } = require("./Table/Schema");
 
@@ -19,10 +19,13 @@ const { users, questions, answers } = require("./Table/Schema");
 // // const questionRoutes = require("./Routes/questionRoute");
 // const authMiddleware = require("./MiddleWare/authMiddleWare")
 
+// Routes
 const userRoutes = require("./Routes/userRoute");
 const questionRoutes = require("./Routes/questionRoute");
 // const authMiddleware = require("./middleware/authMiddleware");
 
+const questionRoutes = require("./Routes/questionRoute");
+// const authMiddleware = require("./MiddleWare/authMiddleware");
 
 // user Route middleware
 app.use("/api/users", userRoutes);
@@ -34,29 +37,29 @@ app.use("/api/questions", questionRoutes); //
 // app.listen(PORT, () => {
 //   console.log(`Server running on port ${PORT}`);
 // });
+// Apply routes
+app.use("/api/users", userRoutes);
+// app.use("/api/questions", authMiddleware, questionRoutes);
 
-// !Answer route middleware
-
-// Start the server and create tables
+// Start server and create tables
 async function start() {
   try {
-    const result = await dbConnection.execute("select 'test' ");
+    await dbConnection.query("SELECT 'test'"); // Test DB connection
     console.log("Database connection established");
 
-    // Create tables
-    await dbConnection.execute(users);
-    await dbConnection.execute(questions);
-    await dbConnection.execute(answers);
+      
+    // start server
+    await dbConnection.query(users);
+    await dbConnection.query(questions);
+    await dbConnection.query(answers);
 
-    await app.listen(port);
-  
-    
-} catch (error) {
-    console.log(error);
-  }
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+  }
 }
- 
-// start server
 
 start();
 
