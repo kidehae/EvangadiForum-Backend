@@ -42,6 +42,8 @@ app.use("/api/users", userRoutes);
 // app.use("/api/questions", authMiddleware, questionRoutes);
 
 // Start server and create tables
+
+
 async function start() {
   try {
     await dbConnection.query("SELECT 'test'"); // Test DB connection
