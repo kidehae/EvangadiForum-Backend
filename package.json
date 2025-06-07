@@ -1,13 +1,17 @@
 {
   "name": "evangadi-forum-project",
   "version": "1.0.0",
+  "description": "Full Stack course final project",
+  "homepage": "https://github.com/abdurehmanahmed/EvangadiForum-Backend#readme",
+  "bugs": {
+    "url": "https://github.com/abdurehmanahmed/EvangadiForum-Backend/issues"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -18,3 +22,4 @@
     "mysql2": "^3.14.1"
   }
 }
+
