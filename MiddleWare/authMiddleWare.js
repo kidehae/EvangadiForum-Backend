@@ -12,7 +12,7 @@ if (!authHeader || !authHeader.starsWith('Bearer')){
 }
 //  removing bearer prefix from the authHeader
 
- const token = authHeader.slice(7);
+const token = authHeader.slice(7);
 
 try {
 const data= jwt.verify(token,process.env.JWT_SECRET)
@@ -21,7 +21,7 @@ next()
 
 }catch (error) {
 const message =
-      error.name === "TokenExpiredError"
+    error.name === "TokenExpiredError"
         ? "Token expired"
         : "Authentication invalid";
 
