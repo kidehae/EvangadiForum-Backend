@@ -12,7 +12,7 @@ app.use(express.json());
 
 // DB connection and table schemas
 
-const dbconnection = require ('./Db/dbConfig')
+const dbConnection = require ('./Db/dbConfig')
 const { users, questions, answers } = require("./Table/Schema");
 
 // Routes
