@@ -6,7 +6,7 @@ async function authMiddleware(req,res,next) {
 
 const authHeader=req.headers.authorization
 
-if (!authHeader || !authHeader.starsWith('Bearer')){
+if (!authHeader || !authHeader.startsWith('Bearer')){
     
     return res.status(StatusCodes.UNAUTHORIZED).json({msg:'Authentication invalid'})
 }
