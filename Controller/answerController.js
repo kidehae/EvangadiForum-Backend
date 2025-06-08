@@ -1,4 +1,4 @@
-const dbConnection = require("../db/dbConfig");
+const dbConnection = require("../Db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
 
 async function getAnswersByQuestionId(req, res) {
