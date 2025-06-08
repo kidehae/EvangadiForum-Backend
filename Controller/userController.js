@@ -114,8 +114,17 @@ async function register(req, res) { // Asynchronous function for DB and hashing
   }
 }
 
+
+//* Function to check user status
+async function checkUser(req, res) {
+  const username = req.user.username;
+  const userid = req.user.userid;
+  
+  res.status(StatusCodes.OK).json({msg: "valid user", username, userid})
+}
+
 module.exports = {
   register,
   login, 
-  // checkUser, // Keep this commented or uncomment if you define and export checkUser
+  checkUser,
 };
