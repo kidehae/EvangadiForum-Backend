@@ -9,6 +9,7 @@ const port = 2112;
 app.use(cors());
 app.use(express.json());
 
+
 // DB connection and table schemas
 const dbConnection = require("./Db/dbConfig");
 const { users, questions, answers } = require("./Table/Schema");
@@ -25,7 +26,7 @@ app.use("/api/users", userRoutes);
 // Start server and create tables
 async function start() {
   try {
-    await dbConnection.query("SELECT 'test'"); // Test DB connection
+     await dbConnection.query("SELECT 'test'"); // Test DB connection
     console.log("Database connection established");
 
     // Create tables

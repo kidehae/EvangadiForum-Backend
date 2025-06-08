@@ -15,6 +15,6 @@ router.post("/register", register);
 router.post("/login", login);
 
 // Check user: Verifies user's authentication status
-router.get("/check", authMiddleware, checkUser);
+// router.get("/check", authMiddleware, checkUser);
 
 module.exports = router; // Exports the router to be used in app.js
