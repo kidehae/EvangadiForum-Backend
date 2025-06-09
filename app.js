@@ -13,7 +13,9 @@ app.use(express.json());
 // DB connection and table schemas
 
 const dbConnection = require ('./Db/dbConfig')
+
 const { users, questions, answers } = require("./Table/schema");
+
 
 // Routes
 const userRoutes = require("./Routes/userRoute");
