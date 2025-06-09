@@ -21,8 +21,8 @@ const authMiddleware = require("./MiddleWare/authMiddleWare");
 
 // Route middleware
 app.use("/api/users", userRoutes);
-app.use("/api/answers", authMiddleware, answersRoute);
-app.use("/api/questions", authMiddleware, questionRoutes);
+app.use("/api/answer", authMiddleware, answersRoute);
+app.use("/api/question", authMiddleware, questionRoutes);
 
 // Start server and create tables
 async function start() {

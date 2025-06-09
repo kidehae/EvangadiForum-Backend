@@ -14,7 +14,7 @@ async function getAnswersByQuestionId(req, res) {
   try {
     const [answers] = await dbConnection.query(
       `
-      SELECT a.answer_id, a.answer, u.username, a.createdate
+      SELECT a.answerid, a.answer, u.username, a.createdate
       FROM answers a
       JOIN users u ON a.userid = u.userid
       WHERE a.questionid = ?
@@ -26,7 +26,7 @@ async function getAnswersByQuestionId(req, res) {
     if (answers.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         error: "Not Found",
-        message: "The requested question could not be found."
+        message: "The requested answer could not be found."
       });
     }
 
@@ -54,7 +54,7 @@ async function postAnswer (req,res) {
     try {
         //3.database insertion
         await dbConnection.query(
-            "INSERT INTO answer(userid, questionid, answer) VALUES (?,?,?)",[userid,questionid,answer]
+            "INSERT INTO answers(userid, questionid, answer) VALUES (?,?,?)",[userid,questionid,answer]
         );
         //4. send success response
         return res.status (StatusCodes.CREATED).json({msg:"Answer posted successfully!"})
