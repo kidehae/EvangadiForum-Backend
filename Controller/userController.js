@@ -1,6 +1,4 @@
-// userController.js
-
-const dbConnection = require("./Db/dbConfig"); 
+const dbConnection = require("../Db/dbConfig"); 
 const bcrypt = require("bcrypt"); // For password hashing
 const { StatusCodes } = require("http-status-codes"); // For standardized HTTP status codes
 const jwt = require("jsonwebtoken"); // For creating JSON Web Tokens
@@ -119,6 +117,7 @@ async function register(req, res) { // Asynchronous function for DB and hashing
 async function checkUser(req, res) {
   const username = req.user.username;
   const userid = req.user.userid;
+
   
   res.status(StatusCodes.OK).json({msg: "valid user", username, userid})
 }

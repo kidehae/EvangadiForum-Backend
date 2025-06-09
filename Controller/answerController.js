@@ -1,4 +1,4 @@
-const dbConnection = require("../db/dbConfig");
+const dbConnection = require("../Db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
 
 async function getAnswersByQuestionId(req, res) {
@@ -46,8 +46,6 @@ module.exports = {
 };
 //This file contains the logic for handling the incoming answer data, validating it, and storing it in the database.
 
-const {StatusCodes} = require ('http-status-codes')
-
 async function postAnswer (req,res) {
     //1. get data from request body
     const {answer, questionid, userid} = req.body;
@@ -59,7 +57,7 @@ async function postAnswer (req,res) {
     }
     try {
         //3.database insertion
-        await dbconnection.query(
+        await dbConnection.query(
             "INSERT INTO answer(userid, questionid, answer) VALUES (?,?,?)",[userid,questionid,answer]
         );
         //4. send success response
