@@ -2,9 +2,9 @@ const dbConnection = require("../Db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
 
 async function getAnswersByQuestionId(req, res) {
-  const { question_id } = req.params;
+  const { questionid } = req.params;
 
-  if (!question_id || isNaN(question_id)) {
+  if (!questionid || isNaN(questionid)) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       error: "Bad Request",
       message: "Invalid question ID.",
@@ -14,13 +14,13 @@ async function getAnswersByQuestionId(req, res) {
   try {
     const [answers] = await dbConnection.query(
       `
-      SELECT a.answer_id, a.answer AS content, u.username AS user_name, a.created_at
+      SELECT a.answer_id, a.answer, u.username, a.createdate
       FROM answers a
-      JOIN users u ON a.user_id = u.userid
-      WHERE a.question_id = ?
-      ORDER BY a.created_at DESC
+      JOIN users u ON a.userid = u.userid
+      WHERE a.questionid = ?
+      ORDER BY a.createdate DESC
       `,
-      [question_id]
+      [questionid]
     );
 
     if (answers.length === 0) {
@@ -41,15 +41,11 @@ async function getAnswersByQuestionId(req, res) {
   }
 }
 
-module.exports = {
-  getAnswersByQuestionId,
-};
 //This file contains the logic for handling the incoming answer data, validating it, and storing it in the database.
-
 async function postAnswer (req,res) {
     //1. get data from request body
-    const {answer, questionid, userid} = req.body;
-    
+    const {answer, questionid} = req.body;
+    const userid = req.user.userid;
 
     //2.input validation
     if (!answer || !questionid || !userid) {
@@ -68,4 +64,4 @@ async function postAnswer (req,res) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:"An unexpected error occurred."})
     }
 }
-module.exports = {postAnswer};
+module.exports = { postAnswer, getAnswersByQuestionId };
