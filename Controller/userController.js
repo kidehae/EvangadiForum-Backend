@@ -46,7 +46,7 @@ async function login(req, res) {
     const token = jwt.sign(
       // Creates a JWT
       { username, userid }, // Payload: data to store in the token (non-sensitive)
-      process.env.JWT_SECRET, // Secret key from .env for signing the token
+      "wjiLHtT2OgGnVlfZZzywl0cb9DzvWRHx", // Secret key from .env for signing the token
       { expiresIn: "30d" } // Token expiration: 30 days
     );
 
