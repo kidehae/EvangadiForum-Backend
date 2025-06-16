@@ -1,10 +1,9 @@
-// db connection
 const dbConnection = require("../Db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
 
 // Create a question
 async function createQuestion(req, res) {
-  const { title, description,tag } = req.body;
+  const { title, description, tag } = req.body;
   const userid = req.user.userid;
 
   // Validate required fields
@@ -19,8 +18,8 @@ async function createQuestion(req, res) {
     // Insert new question into database
     await dbConnection.query(
       `
-      INSERT INTO questions (userid, title, description, tag )
-      VALUES (?, ?, ?, ?)
+      INSERT INTO questions (userid, title, description, tag)
+      VALUES ($1, $2, $3, $4)
     `,
       [userid, title, description, tag]
     );
@@ -43,19 +42,21 @@ async function getSingleQuestion(req, res) {
   const { questionid } = req.params;
 
   try {
-    const [question] = await dbConnection.query(
-      `SELECT q.*, u.userid FROM questions q JOIN users u ON q.userid = u.userid WHERE q.questionid = ?`,
+    const { rows: questions } = await dbConnection.query(
+      `SELECT q.*, u.username FROM questions q 
+       JOIN users u ON q.userid = u.userid 
+       WHERE q.questionid = $1`,
       [questionid]
     );
 
-    if (question.length === 0) {
+    if (questions.length === 0) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: `Question not found!! id: ${questionid} `,
+        message: `Question not found!! id: ${questionid}`,
       });
     }
 
     res.status(StatusCodes.OK).json({
-      question: question[0]
+      question: questions[0],
     });
   } catch (error) {
     console.error("Error fetching question: ", error);
@@ -68,16 +69,17 @@ async function getSingleQuestion(req, res) {
 
 const getAllQuestions = async (req, res) => {
   try {
-    // The mysql2 package returns array with 2 elements from .query():
-    const [questions] = await dbConnection.query(`
+    const { rows: questions } = await dbConnection.query(`
       SELECT 
-        q.questionid ,
+        q.questionid,
         q.title,
-        q.description ,
-        u.username,q.createdate 
+        q.description,
+        u.username,
+        q.createdate,
+        q.tag
       FROM questions q
       JOIN users u ON q.userid = u.userid
-
+      ORDER BY q.createdate DESC
     `);
 
     if (questions.length === 0) {
@@ -87,12 +89,17 @@ const getAllQuestions = async (req, res) => {
       });
     }
 
-    res.status(StatusCodes.OK).json({ questions });
+    // Format dates to ISO string
+    const formattedQuestions = questions.map((question) => ({
+      ...question,
+      createdate: question.createdate.toISOString(),
+    }));
+
+    res.status(StatusCodes.OK).json({ questions: formattedQuestions });
   } catch (error) {
     console.error("Error fetching questions:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal Server Error",
-
       message: error.message || "An unexpected error occurred.",
     });
   }

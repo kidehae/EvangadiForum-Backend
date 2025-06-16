@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 async function getAnswersByQuestionId(req, res) {
   const { questionid } = req.params;
 
-  if (!questionid || isNaN(questionid)) {
+  if (!questionid || isNaN(parseInt(questionid))) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       error: "Invalid question ID",
       message: "Please provide a valid question ID",
@@ -12,11 +12,11 @@ async function getAnswersByQuestionId(req, res) {
   }
 
   try {
-    const [answers] = await dbConnection.query(
+    const { rows: answers } = await dbConnection.query(
       `SELECT a.answerid, a.answer, u.username, a.createdate
        FROM answers a
        JOIN users u ON a.userid = u.userid
-       WHERE a.questionid = ?
+       WHERE a.questionid = $1
        ORDER BY a.createdate DESC`,
       [questionid]
     );
@@ -24,7 +24,7 @@ async function getAnswersByQuestionId(req, res) {
     // Format dates to ISO string before sending
     const formattedAnswers = answers.map((answer) => ({
       ...answer,
-      createdate: new Date(answer.createdate).toISOString(),
+      createdate: answer.createdate.toISOString(),
     }));
 
     return res.status(StatusCodes.OK).json({
@@ -52,25 +52,26 @@ async function postAnswer(req, res) {
   }
 
   try {
-    const [result] = await dbConnection.query(
+    const { rows: result } = await dbConnection.query(
       `INSERT INTO answers (userid, questionid, answer) 
-       VALUES (?, ?, ?)`,
+       VALUES ($1, $2, $3)
+       RETURNING answerid`,
       [userid, questionid, answer]
     );
 
     // Get the newly created answer with username
-    const [newAnswer] = await dbConnection.query(
+    const { rows: newAnswer } = await dbConnection.query(
       `SELECT a.answerid, a.answer, u.username, a.createdate
        FROM answers a
        JOIN users u ON a.userid = u.userid
-       WHERE a.answerid = ?`,
-      [result.insertId]
+       WHERE a.answerid = $1`,
+      [result[0].answerid]
     );
 
     return res.status(StatusCodes.CREATED).json({
       answer: {
         ...newAnswer[0],
-        createdate: new Date(newAnswer[0].createdate).toISOString(),
+        createdate: newAnswer[0].createdate.toISOString(),
       },
       message: "Answer posted successfully",
     });

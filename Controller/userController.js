@@ -1,128 +1,112 @@
 const dbConnection = require("../Db/dbConfig");
-const bcrypt = require("bcrypt"); // For password hashing
-const { StatusCodes } = require("http-status-codes"); // For standardized HTTP status codes
-const jwt = require("jsonwebtoken"); // For creating JSON Web Tokens
+const bcrypt = require("bcrypt");
+const { StatusCodes } = require("http-status-codes");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-//* Function to handle user login
+// Function to handle user login
 async function login(req, res) {
-  // Extract email and password from request body
-  const { email, password } = req.body; // Gets data sent from the frontend
+  const { email, password } = req.body;
 
-  // Validate that both email and password are provided
   if (!email || !password) {
     return res
-      .status(StatusCodes.BAD_REQUEST) // 400 Bad Request: Client sent incomplete data
+      .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Please enter all required fields" });
   }
 
   try {
-    // Query database to find user by email
-    const [user] = await dbConnection.query(
-      "SELECT username, userid, password FROM users WHERE email = ?",
+    // PostgreSQL query returns results in { rows } format
+    const { rows: users } = await dbConnection.query(
+      "SELECT username, userid, password FROM users WHERE email = $1",
       [email]
     );
 
-    // Check if user exists in database (user.length will be 0 if not found)
-    if (user.length == 0) {
+    if (users.length === 0) {
       return res
-        .status(StatusCodes.BAD_REQUEST) // 400 Bad Request: User not found for email
-        .json({ msg: "invalid credential" }); // Generic message for security
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "Invalid credentials" });
     }
 
-    // Compare provided password with stored hashed password using bcrypt
-    const isMatch = await bcrypt.compare(password, user[0].password);
+    const isMatch = await bcrypt.compare(password, users[0].password);
 
-    // Return error if password doesn't match
     if (!isMatch) {
       return res
-        .status(StatusCodes.UNAUTHORIZED) // 401 Unauthorized: Password incorrect
-        .json({ msg: "Invalid credentials" }); // Generic message for security
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ msg: "Invalid credentials" });
     }
 
-    // If Password matches, extract user data from database result
-    const { username, userid } = user[0]; // Destructure relevant user info
-
-    // Generate a JSON Web Token (JWT) for authentication
+    const { username, userid } = users[0];
     const token = jwt.sign(
-      // Creates a JWT
-      { username, userid }, // Payload: data to store in the token (non-sensitive)
-      "wjiLHtT2OgGnVlfZZzywl0cb9DzvWRHx", // Secret key from .env for signing the token
-      { expiresIn: "30d" } // Token expiration: 30 days
+      { username, userid },
+      process.env.JWT_SECRET || "wjiLHtT2OgGnVlfZZzywl0cb9DzvWRHx",
+      { expiresIn: "30d" }
     );
 
-    // Send success response with token and username
     return res
-      .status(StatusCodes.OK) // 200 OK: Login successful
-      .json({ msg: "user login successful", token, username }); // Send token and username to frontend
+      .status(StatusCodes.OK)
+      .json({ msg: "User login successful", token, username });
   } catch (error) {
-    console.log("Login error:", error.message);
+    console.error("Login error:", error.message);
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR) // 500 Internal Server Error: Unexpected server issue
-      .json({ msg: "something went wrong, try again later!" });
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ msg: "Something went wrong, try again later!" });
   }
 }
 
-//* Function to handle user registration
+// Function to handle user registration
 async function register(req, res) {
-  // Asynchronous function for DB and hashing
-  const { username, firstname, lastname, email, password } = req.body; // Get all registration fields
+  const { username, firstname, lastname, email, password } = req.body;
 
-  // Validate that all required fields are provided
   if (!email || !password || !firstname || !lastname || !username) {
-    // Corrected: Added opening curly brace here
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Please provide all required fields" });
   }
 
   try {
-    // Check if user already exists with provided username or email
-    const [user] = await dbConnection.query(
-      "SELECT username, userid FROM users WHERE username = ? OR email = ?",
+    // Check for existing user
+    const { rows: existingUsers } = await dbConnection.query(
+      "SELECT username, userid FROM users WHERE username = $1 OR email = $2",
       [username, email]
     );
 
-    if (user.length > 0) {
-      // If user found, registration fails
+    if (existingUsers.length > 0) {
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "User already registered" });
     }
 
-    // password must be at least 8 characters
     if (password.length < 8) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "Password must be at least 8 characters" });
     }
 
-    // Encrypt the password using bcrypt
-    const salt = await bcrypt.genSalt(10); // Generates a salt (random value for hashing)
-    const hashedPassword = await bcrypt.hash(password, salt); // Hashes the password with the salt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Insert new user into the database
     await dbConnection.query(
-      "INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
-      [username, firstname, lastname, email, hashedPassword] // Values to insert
+      "INSERT INTO users (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5)",
+      [username, firstname, lastname, email, hashedPassword]
     );
 
     return res
       .status(StatusCodes.CREATED)
       .json({ msg: "User registered successfully" });
   } catch (error) {
-    console.log("Registration error:", error.message);
+    console.error("Registration error:", error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ msg: "An unexpected error occurred." });
   }
 }
 
-//* Function to check user status
+// Function to check user status
 async function checkUser(req, res) {
   const username = req.user.username;
   const userid = req.user.userid;
 
-  res.status(StatusCodes.OK).json({ msg: "valid user", username, userid });
+  res.status(StatusCodes.OK).json({ msg: "Valid user", username, userid });
 }
 
 module.exports = {
